@@ -1,117 +1,49 @@
-const levels = [
-  {
-    id: "green_hill",
-    name: "Green Hill Zone Act 3",
-    game: "Sonic 1",
-    thumbnail: "images/greenhill.png",
-    victors: ["Player1", "Player2"]
-  },
-  {
-    id: "chemical_plant",
-    name: "Chemical Plant Zone Act 2",
-    game: "Sonic 2",
-    thumbnail: "images/chemicalplant.png",
-    victors: ["Player3"]
-  }
-];
+let demonList = [];
+let pendingList = [];
+let allowedMods = [];
+let players = [];
 
-const pendingLevels = [
-  {
-    id: "metropolis",
-    name: "Metropolis Zone Act 3",
-    game: "Sonic 2",
-    thumbnail: "images/metropolis.png"
-  }
-];
-
-const allowedMods = [
-  {
-    name: "Sonic 1 Forever"
-  },
-  {
-    name: "Sonic 2 Absolute"
-  }
-];
-
-const players = [
-  {
-    name: "Player1",
-    score: 120,
-    hardestZone: "Chemical Plant Zone Act 2"
-  },
-  {
-    name: "Player2",
-    score: 95,
-    hardestZone: "Green Hill Zone Act 3"
-  }
-];
-
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    const tab = btn.getAttribute("data-tab");
-    document.querySelectorAll(".tab-content").forEach(c => {
-      c.classList.toggle("active", c.id === tab);
-    });
-  });
-});
-
-function createLevelCard(lvl) {
-  const card = document.createElement("div");
-  card.className = "level-card";
-  card.innerHTML = `
-    <img src="${lvl.thumbnail}">
-    <div class="level-info">
-      <h2>${lvl.name}</h2>
-      <p>Game: ${lvl.game}</p>
-    </div>
-  `;
-  card.onclick = () => openLevelPage(lvl);
-  return card;
+async function loadDemonList() {
+  const ids = await fetch("data/demonlist.json").then(r => r.json());
+  const demons = await Promise.all(
+    ids.map(id => fetch(`data/demons/${id}.json`).then(r => r.json()))
+  );
+  demonList = demons;
+  renderDemonList();
 }
 
-function openLevelPage(lvl) {
-  const page = document.getElementById("level-page");
-  page.innerHTML = `
-    <div class="level-header">
-      <img src="${lvl.thumbnail}" class="level-banner">
-      <div>
-        <h1>${lvl.name}</h1>
-        <p>Game: ${lvl.game}</p>
-      </div>
-    </div>
-    <h2>Victors</h2>
-    <div class="victor-list">
-      ${lvl.victors.map(v => `<p>${v}</p>`).join("")}
-    </div>
-  `;
+async function loadPendingList() {
+  const ids = await fetch("data/pending.json").then(r => r.json());
+  const demons = await Promise.all(
+    ids.map(id => fetch(`data/demons/${id}.json`).then(r => r.json()))
+  );
+  pendingList = demons;
+  renderPendingList();
 }
 
-function renderList() {
+async function loadAllowedMods() {
+  allowedMods = await fetch("data/allowed_mods.json").then(r => r.json());
+  renderAllowedMods();
+}
+
+async function loadPlayers() {
+  players = await fetch("data/players.json").then(r => r.json());
+  renderLeaderboard();
+}
+
+function renderDemonList() {
   const container = document.getElementById("list-container");
   container.innerHTML = "";
-  levels.forEach(lvl => container.appendChild(createLevelCard(lvl)));
+  demonList.forEach(d => container.appendChild(createDemonCard(d)));
 }
 
-function renderPending() {
+function renderPendingList() {
   const container = document.getElementById("pending-container");
   container.innerHTML = "";
-  pendingLevels.forEach(lvl => {
-    const card = document.createElement("div");
-    card.className = "level-card";
-    card.innerHTML = `
-      <img src="${lvl.thumbnail}">
-      <div class="level-info">
-        <h2>${lvl.name}</h2>
-        <p>Game: ${lvl.game}</p>
-      </div>
-    `;
-    container.appendChild(card);
-  });
+  pendingList.forEach(d => container.appendChild(createDemonCard(d)));
 }
 
-function renderAllowed() {
+function renderAllowedMods() {
   const container = document.getElementById("allowed-container");
   container.innerHTML = "";
   allowedMods.forEach(m => {
@@ -137,7 +69,64 @@ function renderLeaderboard() {
   });
 }
 
-renderList();
-renderPending();
-renderAllowed();
-renderLeaderboard();
+function createDemonCard(d) {
+  const card = document.createElement("div");
+  card.className = "demon-card";
+  card.innerHTML = `
+    <img src="${d.thumbnail}">
+    <div class="demon-info">
+      <h2>${d.name}</h2>
+      <p>Game: ${d.game}</p>
+    </div>
+  `;
+  card.onclick = () => openDemonPage(d);
+  return card;
+}
+
+function openDemonPage(d) {
+  const overlay = document.getElementById("demon-overlay");
+  overlay.innerHTML = `
+    <div class="demon-page-inner">
+      <button class="close-page" id="close-demon-page">×</button>
+      <div class="demon-page-header">
+        <img src="${d.thumbnail}" class="demon-page-banner">
+        <div>
+          <h1>${d.name}</h1>
+          <p>Game: ${d.game}</p>
+        </div>
+      </div>
+      <h2>Victors</h2>
+      <div class="victor-list">
+        ${Array.isArray(d.victors) ? d.victors.map(v => `<p>${v}</p>`).join("") : ""}
+      </div>
+      ${d.video ? `
+      <div class="demon-page-video">
+        <iframe src="${d.video}" allowfullscreen></iframe>
+      </div>` : ""}
+    </div>
+  `;
+  overlay.classList.add("active");
+  document.getElementById("close-demon-page").onclick = closeDemonPage;
+}
+
+function closeDemonPage() {
+  const overlay = document.getElementById("demon-overlay");
+  overlay.classList.remove("active");
+  overlay.innerHTML = "";
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.getAttribute("data-tab");
+    document.querySelectorAll(".tab-content").forEach(c => {
+      c.classList.toggle("active", c.id === tab);
+    });
+  });
+});
+
+loadDemonList();
+loadPendingList();
+loadAllowedMods();
+loadPlayers();
