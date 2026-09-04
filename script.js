@@ -1,23 +1,23 @@
-let demonList = [];
+let levelList = [];
 let pendingList = [];
 let allowedMods = [];
 let players = [];
 
-async function loadDemonList() {
-  const ids = await fetch("data/demonlist.json").then(r => r.json());
-  const demons = await Promise.all(
-    ids.map(id => fetch(`data/demons/${id}.json`).then(r => r.json()))
+async function loadLevelList() {
+  const ids = await fetch("data/sonic_list.json").then(r => r.json());
+  const levels = await Promise.all(
+    ids.map(id => fetch(`data/levels/${id}.json`).then(r => r.json()))
   );
-  demonList = demons;
-  renderDemonList();
+  levelList = levels;
+  renderLevelList();
 }
 
 async function loadPendingList() {
   const ids = await fetch("data/pending.json").then(r => r.json());
-  const demons = await Promise.all(
-    ids.map(id => fetch(`data/demons/${id}.json`).then(r => r.json()))
+  const levels = await Promise.all(
+    ids.map(id => fetch(`data/levels/${id}.json`).then(r => r.json()))
   );
-  pendingList = demons;
+  pendingList = levels;
   renderPendingList();
 }
 
@@ -31,16 +31,16 @@ async function loadPlayers() {
   renderLeaderboard();
 }
 
-function renderDemonList() {
+function renderLevelList() {
   const container = document.getElementById("list-container");
   container.innerHTML = "";
-  demonList.forEach(d => container.appendChild(createDemonCard(d)));
+  levelList.forEach(l => container.appendChild(createLevelCard(l)));
 }
 
 function renderPendingList() {
   const container = document.getElementById("pending-container");
   container.innerHTML = "";
-  pendingList.forEach(d => container.appendChild(createDemonCard(d)));
+  pendingList.forEach(l => container.appendChild(createLevelCard(l)));
 }
 
 function renderAllowedMods() {
@@ -69,47 +69,47 @@ function renderLeaderboard() {
   });
 }
 
-function createDemonCard(d) {
+function createLevelCard(l) {
   const card = document.createElement("div");
-  card.className = "demon-card";
+  card.className = "level-card";
   card.innerHTML = `
-    <img src="${d.thumbnail}">
-    <div class="demon-info">
-      <h2>${d.name}</h2>
-      <p>Game: ${d.game}</p>
+    <img src="${l.thumbnail}">
+    <div class="level-info">
+      <h2>${l.name}</h2>
+      <p>Game: ${l.game}</p>
     </div>
   `;
-  card.onclick = () => openDemonPage(d);
+  card.onclick = () => openLevelPage(l);
   return card;
 }
 
-function openDemonPage(d) {
+function openLevelPage(l) {
   const overlay = document.getElementById("demon-overlay");
   overlay.innerHTML = `
     <div class="demon-page-inner">
       <button class="close-page" id="close-demon-page">×</button>
+
       <div class="demon-page-header">
-        <img src="${d.thumbnail}" class="demon-page-banner">
+        <img src="${l.thumbnail}" class="demon-page-banner">
         <div>
-          <h1>${d.name}</h1>
-          <p>Game: ${d.game}</p>
+          <h1>${l.name}</h1>
+          <p>Game: ${l.game}</p>
         </div>
       </div>
-      <h2>Victors</h2>
+
+      <h2>Records</h2>
       <div class="victor-list">
-        ${Array.isArray(d.victors) ? d.victors.map(v => `<p>${v}</p>`).join("") : ""}
+        ${l.records.map(r => `
+          <p>${r.user} — ${r.percent}% — <a href="${r.link}" target="_blank">Video</a></p>
+        `).join("")}
       </div>
-      ${d.video ? `
-      <div class="demon-page-video">
-        <iframe src="${d.video}" allowfullscreen></iframe>
-      </div>` : ""}
     </div>
   `;
   overlay.classList.add("active");
-  document.getElementById("close-demon-page").onclick = closeDemonPage;
+  document.getElementById("close-demon-page").onclick = closeLevelPage;
 }
 
-function closeDemonPage() {
+function closeLevelPage() {
   const overlay = document.getElementById("demon-overlay");
   overlay.classList.remove("active");
   overlay.innerHTML = "";
@@ -126,7 +126,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
 });
 
-loadDemonList();
+loadLevelList();
 loadPendingList();
 loadAllowedMods();
 loadPlayers();
