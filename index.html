@@ -1,109 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Global Demonlist</title>
-  <link rel="icon" href="/ne.png">
+  <title>Classic Sonic Level List</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<button id="theme-toggle">Toggle Theme</button>
-
-<div class="tabs">
-  <img src="ne.png" class="tabs-logo">
-
-  <button class="tab-btn active" data-tab="demonlist">Demonlist</button>
-  <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
-  <button class="tab-btn" data-tab="submit">Server</button>
-</div>
-
-<div id="demonlist" class="tab-content active">
-  <h1>Demonlist</h1>
-
-  <div class="panel">
-    <input id="search-bar" placeholder="Search demons by name or position">
-
-    <div class="dropdown-row">
-      <div class="dropdown-group">
-        <label>Main List (1–75)</label>
-        <select id="select-main"></select>
-      </div>
-      <div class="dropdown-group">
-        <label>Extended List (76–100)</label>
-        <select id="select-extended"></select>
-      </div>
-      <div class="dropdown-group">
-        <label>Legacy List (101+)</label>
-        <select id="select-legacy"></select>
-      </div>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="home">Home</button>
+    <button class="tab-btn" data-tab="list">List</button>
+    <button class="tab-btn" data-tab="pending">Pending</button>
+    <button class="tab-btn" data-tab="allowed">Allowed Mods</button>
+    <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
   </div>
 
-  <div class="subtabs">
-    <button class="subtab-btn active" data-subtab="demons">Demons</button>
-    <button class="subtab-btn" data-subtab="challenges">Challenges</button>
+  <div id="home" class="tab-content active">
+    <h1>THE OFFICIAL CLASSIC SONIC LEVEL LIST</h1>
+    <p>Welcome To The Classic Sonic Level List, A Ranking Of The Hardest Classic Sonic Levels, Inspired By The Geometry Dash Demonlist And The FNAF Maxmode List.</p>
   </div>
 
-  <div id="demons" class="subtab-content active">
-    <div id="demon-container"></div>
+  <div id="list" class="tab-content">
+    <h1>Level List</h1>
+    <div id="list-container"></div>
+    <div id="level-page" class="level-page"></div>
   </div>
 
-  <div id="challenges" class="subtab-content">
-    <div id="challenge-container"></div>
-  </div>
-</div>
-
-
-<div id="demon-page" class="tab-content">
-  <div id="demon-page-container"></div>
-</div>
-
-<div id="leaderboard" class="tab-content">
-  <h1>Leaderboard</h1>
-
-  <div class="leaderboard-subtabs">
-    <button class="leaderboard-subtab-btn active" data-lb="main-lb">Main</button>
-    <button class="leaderboard-subtab-btn" data-lb="challenge-lb">Challenges</button>
+  <div id="pending" class="tab-content">
+    <h1>Pending Levels</h1>
+    <div id="pending-container"></div>
   </div>
 
-  <div id="main-lb" class="leaderboard-subtab-content active">
-    <div class="panel">
-      <div class="leaderboard-controls">
-        <input id="player-search" placeholder="Search players">
-        <select id="leaderboard-filter">
-          <option value="points">Most Points</option>
-          <option value="tier">Highest Tier</option>
-        </select>
-      </div>
-      <div id="leaderboard-container"></div>
-    </div>
+  <div id="allowed" class="tab-content">
+    <h1>Allowed Mods</h1>
+    <div id="allowed-container"></div>
   </div>
 
-  <div id="challenge-lb" class="leaderboard-subtab-content">
-    <div class="panel">
-      <h2>Challenge Leaderboard</h2>
-      <div id="challenge-leaderboard-container"></div>
-    </div>
+  <div id="leaderboard" class="tab-content">
+    <h1>Leaderboard</h1>
+    <div id="leaderboard-container"></div>
   </div>
-</div>
 
-<div id="submit" class="tab-content">
-  <h1>Server</h1>
-  <div class="panel">
-    <p>Discord Server</p>
-    <a href="https://discord.gg/P7aHCenrAg" target="_blank" class="submit-btn">Join</a>
-  </div>
-</div>
-
-<div id="guidelines" class="tab-content">
-  <h1>Extras</h1>
-  <div class="panel">
-     <a href="https://sites.google.com/view/dlplusstuff/home-page" target="_blank" class="submit-btn">Open Extras</a>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
